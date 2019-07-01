@@ -1,4 +1,5 @@
 from random import randint
+import psycopg2
 
 
 def byTime_key(point):
@@ -23,22 +24,60 @@ with open('file.bin', 'rb') as file:
 
 # Сортируем по времени
 data_points = sorted(data_points, key=byTime_key)
+
+conn = psycopg2.connect(dbname='django_db', user='admin', password='admin', host='localhost', port=5432)
+cur = conn.cursor()
+# Получаем последний индекс в БД
+cur.execute("SELECT MAX(id) FROM mainapp_point")
+start_id = cur.fetchone()
+conn.commit()
+# TODO Сделать один запрос, а не циклические
+for point_elem in data_points:
+    cur.execute("INSERT INTO mainapp_point("
+                "time,"
+                " val,"
+                " more_time,"
+                " less_time,"
+                " more_value, "
+                "less_value"
+                ") VALUES (%s, %s, %s, %s, %s, %s)",
+                (
+                    point_elem['time'],
+                    point_elem['value'],
+                    point_elem['more_time'],
+                    point_elem['less_time'],
+                    point_elem['more_value'],
+                    point_elem['less_value']
+                )
+                )
+
+conn.commit()
+# Получаем точки, которые записали, но уже с ID
+cur.execute("SELECT * FROM mainapp_point WHERE id > %s", (start_id,))
+info = cur.fetchall()
+
+conn.commit()
+
 intervals = list()
 
-for c in data_points:
-    print(c)
+for i in range(len(info) - 1):
+    for j in range(i+1, len(info)):
 
-for i in range(len(data_points) - 1):
-    for j in range(i+1, len(data_points)):
-        interval = dict()
-        interval['val'] = data_points[j]['time'] - data_points[i]['time']
-        interval['point_a'] = data_points[i]
-        interval['point_b'] = data_points[j]
-        intervals.append(interval)
+        intervals.append(info[j][1] - info[i][1])
+        intervals.append(info[i][0])
+        intervals.append(info[j][0])
 
-# print(len(intervals))
-#
-# [print(intervals[randint(0, 4949)]) for _ in range(5)]
+# Формируем строку для одного запроса к БД на запись всех интервалов
+s = "INSERT INTO mainapp_interval(val, point_a_id, point_b_id) VALUES"
+for _ in range(len(intervals) // 3):
+    s = s + ' (%s, %s, %s),'
+s = s[:-1]
 
-# for c in intervals:
-#     print(c)
+# Записываем интервалы в БД
+cur.execute(s, intervals)
+conn.commit()
+
+cur.close()
+conn.close()
+
+
