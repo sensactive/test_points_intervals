@@ -6,8 +6,8 @@ from django.db import models
 
 class Comment(models.Model):
     text = models.CharField(max_length=150, verbose_name='Комментарий')
-    start_time = models.DateTimeField(null=True, blank=True, verbose_name='C: ')
-    finish_time = models.DateTimeField(null=True, blank=True, verbose_name='До: ')
+    start_time = models.IntegerField(null=True, blank=True, verbose_name='C: ')
+    finish_time = models.IntegerField(null=True, blank=True, verbose_name='До: ')
 
 
 class Point(models.Model):
@@ -18,6 +18,9 @@ class Point(models.Model):
     less_time = models.IntegerField(verbose_name='Нижний допуск по времени')
     more_value = models.IntegerField(verbose_name='Верхний допуск по значению')
     less_value = models.IntegerField(verbose_name='Нижний допуск по значению')
+
+    def __str__(self):
+        return f'Time: {self.time} Value: {self.val}'
 
 
 class Interval(models.Model):

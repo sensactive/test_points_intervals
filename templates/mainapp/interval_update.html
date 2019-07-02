@@ -1,0 +1,11 @@
+{% extends 'mainapp/base.html' %}
+
+{% block content %}
+
+  <form class="form-horizontal col-6" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+  <button>Сохранить</button>
+  </form>
+
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'mainapp/base.html' %}
+
+{% block content %}
+
+  <div class="user_delete text-center">
+    Уверены, что хотите удалить точку с ID: {{ object.id }} ?
+    <form action="{% url 'mainapp:delete_interval' pk=object.id %}" method="post">
+      {% csrf_token %}
+      <input class="btn btn-danger" type="submit" value="удалить">
+    </form>
+    <button class="btn btn-success">
+      <a href="{% url 'mainapp:intervals' %}">
+        Отмена
+      </a>
+    </button>
+  </div>
+
+{% endblock %}
