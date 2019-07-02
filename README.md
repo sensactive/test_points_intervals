@@ -1,8 +1,9 @@
 # Installation
 Проект на Django 2.2 и Python3.6. В папке fill_db находится скрипт test_bin.py, который запускается из корня в консоли с одним
 обязательным параметром -f - путь к .bin файлу.
-Ещё потребуется база данных PostgreSQL(в проекте и в скрипте уже настроена БД PostgreSQL с именем django_db и пользователем
-admin и паролем admin). Перед запуском скрипта нужно установить зависимости из файла requirements.txt
+Ещё потребуется база данных PostgreSQL(в проекте и в скрипте уже настроена БД PostgreSQL с именем django_db, пользователем
+admin и паролем admin). Перед запуском скрипта нужно установить зависимости из файла requirements.txt (Все команды
+выполнять в корне проекта)
 
 ```bash
 pip install -r requirements.txt
@@ -16,7 +17,7 @@ python manage.py migrate
 Теперь можно запускать скрипт
 
 ```bash
-python test_bin.py -f <path>
+python fill_db/test_bin.py -f <path>
 ```
 
 ## Запуск основного приложения Django
